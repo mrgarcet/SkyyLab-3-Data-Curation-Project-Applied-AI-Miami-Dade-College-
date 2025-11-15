@@ -35,7 +35,7 @@ def append_list_to_file(lst, filename):
 
 cleaned_links_list = []
 
-file = open("../data/processed_mdc_links.txt", 'r')
+file = open("../data/legacy_processed_mdc_links.txt", 'r')
 link_contents = file.read()
 link_list = ast.literal_eval(link_contents)
 file.close()
@@ -44,4 +44,4 @@ file.close()
 for n in range(0,len(link_list)):
     cleaned_links_list.append(clean_links(link_list[n]))
 
-append_list_to_file(create_list_without_duplicates(cleaned_links_list), "../data/cleaned_links_set.txt")
+append_list_to_file(create_list_without_duplicates(cleaned_links_list), "../data/legacy_cleaned_links_set.txt")
