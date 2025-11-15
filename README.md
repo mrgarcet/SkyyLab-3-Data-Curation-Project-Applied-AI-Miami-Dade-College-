@@ -1,7 +1,7 @@
 # 🧩 MDC Data Curation & Web Scraping Pipeline  
 ### *Miami Dade College – Applied AI / NLP Project*  
 **Author:** Lorenzo Garcet  
-**Version:** 2.0 (Crawler), 1.0 (Legacy Tools Provided by MDC)  
+**Version:** 2.0 (Crawler), 1.0 (Legacy/ Old Pipeline Tools Provided by MDC)  
 **Last Updated:** 2025-11-14
 
 ---
@@ -25,7 +25,24 @@ Started with an externally-provided list of URLs and used scripts to clean, filt
 ### **2. Business-Grade Crawler Pipeline (v2)**  
 A modern, production-style crawler (`crawler.py`) that discovers MDC pages automatically, filters bad links, logs errors, and outputs a comprehensive list of real HTML pages.
 
-Both workflows are documented below.
+Documentation for new pipeline, legacy pipeline noted.
+
+Category URLs counts:
+  other           7188
+  events          664
+  campus          594
+  about           367
+  student_services 327
+  program_info    303
+  financial_aid   219
+  faculty_staff   135
+  admissions      123
+  library         25
+  degree_page     19
+  course_catalog  13
+  news            12
+  online_tools    10
+
 
 ---
 
@@ -59,11 +76,8 @@ Both workflows are documented below.
 
 ### ✔ Sample output
 [435] https://www.mdc.edu/academics/ - elapsed: 575.3s, frontier=92
-STOPPED because max_pages (2000) was reached.
-Saved 2000 URLs to ../data/mdc_links_raw_v1.txt
-
-yaml
-Copy code
+STOPPED because max_pages (10000) was reached.
+Saved 10000 URLs to ../data/mdc_links_raw_v1.txt
 
 `Note: seed max_page= 10,000 does not reach end of available links to explore, 
 current time for the crawler 5.5 - 6 hours. To be run once a month during low network traffic times.`
@@ -94,8 +108,6 @@ list_divider.py
 p_tag_scrapper.py
 │ (extracts <p> text → link_#.txt)
 
-markdown
-Copy code
 
 ---
 
@@ -117,6 +129,7 @@ Copy code
 | `p_tag_scrapper.py` | Script | Scrapes `<p>` tags into individual files. |
 | `link_#.txt` | Data | Extracted text from individual pages (legacy method). |
 
+
 ---
 
 # 🧩 Detailed Script Documentation
@@ -130,7 +143,7 @@ Automatically crawl MDC’s public site and collect up to 10,000 HTML pages.
 - `should_skip_url()` → filters auth/confirm URLs
 - `is_disallowed_path()` → respects robots.txt
 - `has_skipped_extension()` → skips non-HTML
- 
+
 ### **Configuration**
 ```python
 DEFAULT_MAX_PAGES = 10000
@@ -141,124 +154,16 @@ Output
 ../data/mdc_links_raw_v2.txt
 
 ../data/mdc_crawler_errors_v2.log
+```
+### ***Notes***
+1. The crawler (v2) ignore pdf links, which cause missing the links for degree program breakdown
+of the classes needed in order to complete the degree plan, this is something that need to be adjusted at a later time.
+This is important information that would be beneficial to have with the scope of the project.
+2. Crawler was ran as (v2) with `default_max_pages=1000` seed adjusted to 20000 to ensure addition space was allocated to account for PDFs linsk.
+---
+## 1. `link_cleaner` (v2.0)
 
-2. link_cleaner.py
-Removes fragments & duplicate entries.
-
-Functions
-clean_links(url)
-
-create_list_without_duplicates(list)
-
-append_list_to_file(list, file)
-
-Output: cleaned_links_set.txt
-
-3. link_cleaner_v0.0.2.py
-Improved version using Python literal strings for interoperability.
-
-Recommended version to use ✔
-Why: Compatible with ast.literal_eval().
-
-4. pdf_remover.py
-Filters .pdf references from cleaned link list.
-
-Reads
-cleaned_links_set.txt
-
-Writes
-no_pdf_list.txt
-
-5. list_divider.py
-Used in the legacy pipeline to divide scraped URLs into three scraping batches.
-
-Outputs:
-no_pdf_list_div1.txt
-
-no_pdf_list_div2.txt
-
-no_pdf_list_div3.txt
-
-6. p_tag_scrapper.py
-Fetches URLs and extracts <p> paragraphs into text files.
-
-⚠️ Known bug:
-
-python
-Copy code
-index =+ 1  # wrong
-index += 1  # correct
-📁 Data Flow Diagram (All Systems)
-mermaid
-Copy code
-flowchart TD
-
-%% Crawler v2
-A1[SEED_URLS: https://www.mdc.edu/] --> B1[crawler.py]
-B1 --> C1[mdc_links_raw_v2.txt]
-B1 --> D1[mdc_crawler_errors_v2.log]
-
-%% Legacy pipeline
-C2[processed_mdc_links.txt] --> D2[link_cleaner_v0.0.2.py]
-D2 --> E2[cleaned_links_set.txt]
-E2 --> F2[pdf_remover.py]
-F2 --> G2[no_pdf_list.txt]
-G2 --> H2[list_divider.py]
-H2 --> I2[div1/div2/div3]
-I2 --> J2[p_tag_scrapper.py]
-J2 --> K2[link_#.txt]
-🧰 Dependencies
-Install required Python libraries:
-
-bash
-Copy code
-pip install requests beautifulsoup4
-🚀 How to Run the New Crawler
-bash
-Copy code
-python crawler.py
-Results saved to:
-
-../data/mdc_links_raw_v2.txt
-
-../data/mdc_crawler_errors_v2.log
-
-🧾 Future Output Format (Planned JSONL)
-For AI/NLP, each page will eventually be stored as:
-
-json
-Copy code
-{
-  "url": "https://www.mdc.edu/example/",
-  "title": "Example Page",
-  "headings": ["Header 1", "Header 2"],
-  "text": "... extracted text ...",
-  "last_seen": "2025-11-14",
-  "tags": ["admissions", "degree_program"]
-}
-🧩 Recommended Improvements (Roadmap)
-✔ Replace raw text lists with JSON or JSONL
-✔ Add retries/backoff logic in crawler
-✔ Automate nightly crawls
-✔ Build page scraper using BeautifulSoup
-✔ Build curated / tagged dataset
-✔ Add vector embeddings (OpenAI/HF models)
-✔ Build search & Q&A layer for Skyy AI
-🧭 Business Context
-This pipeline enables MDC to:
-
-Maintain an authoritative digital knowledge base
-
-Power AI student assistants
-
-Provide program discovery tools
-
-Enable robust search over degrees/courses
-
-Reduce administrative load
-
-Improve student experience and retention
-
+---
 🏁 Summary
 This repository now contains:
 
