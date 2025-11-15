@@ -1,5 +1,5 @@
 """
-url_categorizer.py
+url_categorizer.py (v1)
 
 Goal:
 - Read cleaned_links_v2.txt (one URL per line)
