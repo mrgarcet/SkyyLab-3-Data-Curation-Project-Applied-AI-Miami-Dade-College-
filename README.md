@@ -1,7 +1,7 @@
 # 🧩 MDC Data Curation & Web Scraping Pipeline  
 ### *Miami Dade College – Applied AI / NLP Project*  
 **Author:** Lorenzo Garcet  
-**Version:** 2.0 (Crawler), 1.0 (Legacy Tools)  
+**Version:** 2.0 (Crawler), 1.0 (Legacy Tools Provided by MDC)  
 **Last Updated:** 2025-11-14
 
 ---
@@ -32,32 +32,10 @@ Both workflows are documented below.
 # ⚙️ Pipeline Summary
 
 ## **High-Level Workflow**
-java
-Copy code
-        ┌──────────────────────┐
-        │ Crawler (v2.0)       │
-        │ crawler.py           │
-        └──────────┬───────────┘
-                   │
-                   ▼
-  ┌──────────────────────────────────┐
-  │ Raw URL Processing (cleaners)    │
-  │ link_cleaner, pdf_remover, etc.  │
-  └──────────┬───────────────────────┘
-             │
-             ▼
-┌────────────────────────────────────┐
-│ Content Scraping (Next Phase)      │
-│ page_scraper.py / p_tag_scrapper   │
-└──────────┬─────────────────────────┘
-           │
-           ▼
-  ┌────────────────────────────────┐
-  │ Curation & Tagging (Future)    │
-  │ JSONL schema, program tagging  │
-  └────────────────────────────────┘
-markdown
-Copy code
+
+1. `crawler.py` → `../data/mdc_links_raw_v2.txt`
+2. `link_cleaner.py (updated version)` → `../data/cleaned_links_v2.txt`
+3. Next scripts (PDF remover / splitter / content scraper) should read from cleaned_links_v2.txt.
 
 ---
 
@@ -74,7 +52,7 @@ Copy code
 - Tracks crawl progress (elapsed time + frontier size)  
 - Detects reason for stop:
   - True end of website  
-  - Hit the `DEFAULT_MAX_PAGES` limit  
+  - Hit the `DEFAULT_MAX_PAGES` limit seed set to: 10,0000
 - Outputs versioned datasets:
   - `mdc_links_raw_v1.txt`
   - `mdc_links_raw_v2.txt`
@@ -87,6 +65,8 @@ Saved 2000 URLs to ../data/mdc_links_raw_v1.txt
 yaml
 Copy code
 
+`Note: seed max_page= 10,000 does not reach end of available links to explore, 
+current time for the crawler 5.5 - 6 hours. To be run once a month during low network traffic times.`
 ---
 
 # 🧠 Legacy Pipeline Detail (v1)
