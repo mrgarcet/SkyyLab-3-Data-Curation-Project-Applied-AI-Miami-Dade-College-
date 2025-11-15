@@ -44,7 +44,7 @@ def generate_filename(base_name, extension, index):
     return filename
 
 
-file = open("../data/no_pdf_list_div3.txt", 'r')
+file = open("../data/legacy_no_pdf_list_div3.txt", 'r')
 link_contents = file.read()
 link_list = ast.literal_eval(link_contents)
 file.close()
