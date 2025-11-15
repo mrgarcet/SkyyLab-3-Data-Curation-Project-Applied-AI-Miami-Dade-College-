@@ -54,6 +54,13 @@ Category URLs counts:
 2. `link_cleaner.py (updated version)` → `../data/cleaned_links_v2.txt`
 3. Next scripts (PDF remover / splitter / content scraper) should read from cleaned_links_v2.txt.
 
+```
+Versioning Section:
+We follow a semantic versioning approach for this project:
+    •    Major version (X.0.0): Significant feature updates or large changes.
+    •    Minor version (X.Y.0): Smaller feature additions or enhancements.
+    •    Patch version (X.Y.Z): Minor tweaks, bug fixes, or small adjustments.
+```
 ---
 
 # 🆕 **New Business-Grade Crawler (v2.0)**
@@ -79,8 +86,18 @@ Category URLs counts:
 STOPPED because max_pages (10000) was reached.
 Saved 10000 URLs to ../data/mdc_links_raw_v1.txt
 
-`Note: seed max_page= 10,000 does not reach end of available links to explore, 
-current time for the crawler 5.5 - 6 hours. To be run once a month during low network traffic times.`
+### Best Practice 
+```
+- Scheduled Crawler Runs: To minimize impact on the school’s website traffic, we run the crawler once a month during 
+off-peak hours. For example, we start it around midnight and let it run until early morning (about 10 hours), ensuring 
+we’re not overloading the network. 
+- Polite Crawling: We include a one-second delay between requests to avoid flooding the server and to stay within 
+respectful usage limits.
+```
+```
+Note: seed max_page= 20,000 does not reach end of available links to explore, 
+current time for the crawler 9 - 10 hours. To be run once a month during low network traffic times.
+```
 ---
 
 # 🧠 Legacy Pipeline Detail (v1)

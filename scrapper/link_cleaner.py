@@ -1,5 +1,5 @@
 """
-link_cleaner.py (v3)
+link_cleaner.py (v0.2.1)
 
 Purpose:
 - Take the raw crawler output from mdc_links_raw_v3.txt

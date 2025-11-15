@@ -1,5 +1,5 @@
 """
-crawler.py (v3)
+crawler.py (v0.2.1)
 
 This file is the missing crawler/scraper that was not included
 with the original MDC scraping utilities.
