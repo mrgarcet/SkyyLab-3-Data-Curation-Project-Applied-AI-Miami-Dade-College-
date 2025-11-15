@@ -1,2 +1,15 @@
 # Changelog
 - v1 initial
+- created new `crawler.py`, due to no crawler been available and wanting a clean single line output per link.
+- created `link_cleaner.py`, to `clean mdc_links_raw_v2.txt` remove duplicate and unwanted file types
+- Initial project upload to giiHub
+- Update README: added project information, and breakdown of some information (still needs updates)
+- Updated `link_cleaner` with new pipeline logic
+- Updated cleaned version of links from executing `link_cleaner.py`
+- Refactor legacy files into it own directory: update pipeline logic and cleanup
+- created `url_categorizer.py`, to break links into categories to help determine what information to scrape 
+- Pushed to `github` `url_categorizer.py` and both outputs from running the file.
+- Added the `link_cleaner.py` missing legacy file to Directory and Git REPO
+- Updated `crawler.py` to stop ignoring PDFs links
+- Updated `link_cleaner.py` add another output for pdf links to be process differently and updated version to v3
+- 
