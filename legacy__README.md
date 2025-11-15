@@ -135,16 +135,16 @@ pip install requests beautifulsoup4
 
 ```bash
 # 1. Clean URLs
-python link_cleaner_v0.0.2.py
+python legacy_link_cleaner_v0.0.2.py
 
 # 2. Remove PDFs
-python pdf_remover.py
+python legacy_pdf_remover.py
 
 # 3. Divide into smaller lists
-python list_divider.py
+python legacy_list_divider.py
 
 # 4. Scrape paragraph text
-python p_tag_scrapper.py
+python legacy_p_tag_scrapper.py
 ```
 
 ---
