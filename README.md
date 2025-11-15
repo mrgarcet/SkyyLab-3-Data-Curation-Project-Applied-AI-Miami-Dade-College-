@@ -152,7 +152,6 @@ REQUEST_DELAY = 1.0
 ALLOWED_DOMAIN_SUFFIX = "mdc.edu"
 Output
 ../data/mdc_links_raw_v2.txt
-
 ../data/mdc_crawler_errors_v2.log
 ```
 ### ***Notes***
