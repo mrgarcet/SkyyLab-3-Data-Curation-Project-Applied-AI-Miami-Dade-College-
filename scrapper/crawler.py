@@ -1,5 +1,5 @@
 """
-crawler.py
+crawler.py (v3)
 
 This file is the missing crawler/scraper that was not included
 with the original MDC scraping utilities.
@@ -28,7 +28,9 @@ from bs4 import BeautifulSoup
 SEED_URLS: List[str] = ["https://www.mdc.edu/"]
 
 # Safety limit so the crawler does not run forever
-DEFAULT_MAX_PAGES: int = 10000
+# v2 ran out limit of 10000 and v2 data document where created
+# v3 adjusted to 20000 but was not executed due to time constrain of project.
+DEFAULT_MAX_PAGES: int = 20000
 
 # Network settings
 REQUEST_TIMEOUT: int = 20      # seconds to wait for each HTTP response
@@ -51,15 +53,22 @@ DISALLOWED_PATH_PREFIXES = (
 )
 
 # File extensions we don't want to crawl (non-HTML, large files, etc.)
+"""" 
+v3 removed .pdf extension exception, pdf information found to be useful and important
+pdf links will be scrapped and added into it own data .txt file.
+"""
 SKIP_EXTENSIONS = (
-    ".pdf", ".jpg", ".jpeg", ".png", ".gif",
+    #".pdf",
+    ".jpg", ".jpeg", ".png", ".gif",
     ".doc", ".docx", ".xls", ".xlsx", ".ppt", ".pptx",
     ".zip", ".rar", ".mp4", ".mp3",
 )
 
 # Output files
-OUTPUT_LINKS_PATH: str = "../data/mdc_links_raw_v2.txt"
-ERROR_LOG_PATH: str = "../data/mdc_crawler_errors_v2.log"
+# Updated to v3 already
+# UPDATE VERSION NUMBER IF ADJUSTING CODE FOR CRAWLER - remember to update link_cleaner path
+OUTPUT_LINKS_PATH: str = "../data/mdc_links_raw_v3.txt"     # UPDATE VERSION NUMBER BEFORE RUNNING
+ERROR_LOG_PATH: str = "../data/mdc_crawler_errors_v3.log"   # UPDATE VERSION NUMBER BEFORE RUNNING
 
 # Optional custom User-Agent (just to be polite/clear)
 HEADERS = {
@@ -192,6 +201,11 @@ def crawl_mdc(seed_urls: List[str], max_pages: int = DEFAULT_MAX_PAGES) -> List[
         results.append(url)
         elapsed = time.time() - start_time
         print(f"[{len(results)}] {url} - elapsed: {elapsed:.1f}s, frontier={len(to_visit)}")
+
+        # If this is a PDF, don't try to parse it as HTML or discover links from it
+        if parsed.path.lower().endswith(".pdf"):
+            time.sleep(REQUEST_DELAY)
+            continue
 
         # Parse HTML and discover new links
         soup = BeautifulSoup(resp.text, "html.parser")
