@@ -26,8 +26,8 @@ Started with an externally-provided list of URLs and used scripts to clean, filt
 A modern, production-style crawler (`crawler.py`) that discovers MDC pages automatically, filters bad links, logs errors, and outputs a comprehensive list of real HTML pages.
 
 Documentation for new pipeline, legacy pipeline noted.
-
-Category URLs counts:
+```
+Category URLs counts v2:
   other           7188
   events          664
   campus          594
@@ -42,7 +42,57 @@ Category URLs counts:
   course_catalog  13
   news            12
   online_tools    10
+```
 
+```
+v0.2.1
+HTML category counts:
+  Other/Uncategorized            3308
+  Library & Research             3168
+  Programs, Degrees & Catalog    2934
+  Events & Calendar              1485
+  Continuing Education (non-credit) 1435
+  Campuses & Locations           1197
+  News & Press                   1107
+  Student Resources & Support    830
+  Testing & Placement            406
+  Advising & Registration        302
+  Financial Aid & Scholarships   170
+  Foundation & Alumni            158
+  Costs & Payments               138
+  Public Safety & Emergency      129
+  MDC Online                     126
+  Portals & Systems              122
+  Career Services (MDC WORKS)    77
+  Admissions & Getting Started   74
+  International Students         66
+  Veterans & Military            51
+  Policies & Procedures          10
+
+Wrote: ../data/urls_with_category_v3.csv
+Wrote: ../data/target_links_v3.txt  (MVP categories only; HTML only)
+
+PDF category counts:
+  Other/Uncategorized            1047
+  Policies & Procedures          422
+  News & Press                   389
+  Campuses & Locations           336
+  Programs, Degrees & Catalog    222
+  Testing & Placement            76
+  Advising & Registration        64
+  Admissions & Getting Started   49
+  Costs & Payments               29
+  Public Safety & Emergency      23
+  MDC Online                     13
+  Library & Research             11
+  Financial Aid & Scholarships   8
+  Career Services (MDC WORKS)    7
+  Portals & Systems              4
+  Continuing Education (non-credit) 3
+  International Students         2
+
+Wrote: ../data/pdfs_with_category_v3.csv           19
+```
 
 ---
 

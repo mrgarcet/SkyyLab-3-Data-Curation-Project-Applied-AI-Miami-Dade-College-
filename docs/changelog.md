@@ -12,4 +12,5 @@
 - Added the `link_cleaner.py` missing legacy file to Directory and Git REPO
 - Updated `crawler.py` to stop ignoring PDFs links
 - Updated `link_cleaner.py` add another output for pdf links to be process differently and updated version to v3
-- 
+- Updated `url_categorizer.py` to v0.2.1, adding additional rules and more structure to the categorizer 
+- Updated `url_categorizer.py` to include in the categorizer `process pdf_links_v3.txt`
