@@ -27,7 +27,7 @@ OUTPUT_PDF_PATH = "../data/pdf_links_v3.txt"
 ALLOWED_DOMAIN_SUFFIX = "mdc.edu"
 
 # Anything you *never* want to keep can go here
-# v3 removed pdf from list of exceptions so we KEEP pdf URLs
+# v0.2.1 removed pdf from list of exceptions so we KEEP pdf URLs
 SKIP_EXTENSIONS = (
     # ".pdf",
     ".jpg", ".jpeg", ".png", ".gif",
@@ -51,7 +51,7 @@ def normalize_url(url: str) -> str:
     return clean
 
 
-# v3 add get_extension function
+# v0.2.1 add get_extension function
 def get_extension(url: str) -> str:
     """
     Return the lowercase file extension (e.g. ".pdf") or "" if none.
@@ -63,7 +63,7 @@ def get_extension(url: str) -> str:
     return ""
 
 
-# v3 update, no longer used
+# v0.2.1 update, no longer used
 # def has_skipped_extension(url: str) -> bool:
 #     path = urlparse(url).path.lower()
 #     return path.endswith(SKIP_EXTENSIONS)

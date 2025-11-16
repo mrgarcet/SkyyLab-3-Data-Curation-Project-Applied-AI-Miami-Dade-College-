@@ -28,8 +28,8 @@ from bs4 import BeautifulSoup
 SEED_URLS: List[str] = ["https://www.mdc.edu/"]
 
 # Safety limit so the crawler does not run forever
-# v2 ran out limit of 10000 and v2 data document where created
-# v3 adjusted to 20000 but was not executed due to time constrain of project.
+# v0.1.1 ran out limit of 10000 and v2 data document where created
+# v0.2.1 adjusted to 20000 but was not executed due to time constrain of project.
 DEFAULT_MAX_PAGES: int = 20000
 
 # Network settings
@@ -38,13 +38,14 @@ REQUEST_DELAY: float = 1.0     # seconds to sleep between requests (politeness)
 
 # Only stay within this domain
 ALLOWED_DOMAIN_SUFFIX: str = "mdc.edu"
-
+"""
 # Paths that robots.txt says are disallowed for all user-agents
-# User-agent: *
-# Disallow: /newsandnotes/
-# Disallow: /trackback/
-# Disallow: /publications/
-# Disallow: /email/
+- User-agent: *
+- Disallow: /newsandnotes/
+- Disallow: /trackback/
+- Disallow: /publications/
+- Disallow: /email/
+"""
 DISALLOWED_PATH_PREFIXES = (
     "/newsandnotes/",
     "/trackback/",
@@ -65,7 +66,7 @@ SKIP_EXTENSIONS = (
 )
 
 # Output files
-# Updated to v3 already
+# Updated to v0.2.1 already
 # UPDATE VERSION NUMBER IF ADJUSTING CODE FOR CRAWLER - remember to update link_cleaner path
 OUTPUT_LINKS_PATH: str = "../data/mdc_links_raw_v3.txt"     # UPDATE VERSION NUMBER BEFORE RUNNING
 ERROR_LOG_PATH: str = "../data/mdc_crawler_errors_v3.log"   # UPDATE VERSION NUMBER BEFORE RUNNING
