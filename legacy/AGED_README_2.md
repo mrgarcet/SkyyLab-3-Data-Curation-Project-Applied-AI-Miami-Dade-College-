@@ -1,8 +1,11 @@
 # 🧩 MDC Data Curation & Web Scraping Pipeline  
 ### *Miami Dade College – Applied AI / NLP Project*  
-**Author:** Lorenzo Garcet  
-**Version:** 2.0 (Crawler), 1.0 (Legacy/ Old Pipeline Tools Provided by MDC)  
-**Last Updated:** 2025-11-14
+**Author:** Garcet, Lorenzo A.  
+**Team Members:** Duran, Fabrizio Andres   
+**Team Members:** Lopez Jr., Jorge  
+**Team Members:** Martinez III, Miguel Angel  
+**Version:** v1.2.2 (Crawler), 1.0 (Legacy/ Old Pipeline Tools Provided by MDC)  
+**Last Updated:** 2025-11-16
 
 ---
 
@@ -22,12 +25,12 @@ Two systems exist in this repository:
 ### **1. Legacy Pipeline (v1)**  
 Started with an externally-provided list of URLs and used scripts to clean, filter, divide, and scrape `<p>` tags into text files.
 
-### **2. Business-Grade Crawler Pipeline (v2)**  
+### **2. Business-Grade Crawler Pipeline (v0.2.1)**  
 A modern, production-style crawler (`crawler.py`) that discovers MDC pages automatically, filters bad links, logs errors, and outputs a comprehensive list of real HTML pages.
 
-Documentation for new pipeline, legacy pipeline noted.
+Documentation for new pipeline was created, the legacy pipeline did not include a markdown.
 ```
-Category URLs counts v2:
+Category URLs counts v0.1.1 (file: ../aged_data_files/url_with_category_v1.csv):
   other           7188
   events          664
   campus          594
@@ -45,7 +48,7 @@ Category URLs counts v2:
 ```
 
 ```
-v0.2.1
+Category URLs counts v0.1.1 (file: ../data/url_with_category_v3.csv)
 HTML category counts:
   Other/Uncategorized            3308
   Library & Research             3168
@@ -113,71 +116,6 @@ We follow a semantic versioning approach for this project:
 ```
 ---
 
-# 🆕 **New Business-Grade Crawler (v2.0)**
-
-`crawler.py` is a **production-style, polite, domain-restricted crawler** that automatically discovers MDC content.
-
-### ✔ Features
-- Crawls only `*.mdc.edu` domains  
-- Skips login URLs, confirm endpoints, and JS-driven junk  
-- Avoids PDFs, images, docs, media  
-- Follows robots.txt disallow rules  
-- Logs errors and status codes  
-- Tracks crawl progress (elapsed time + frontier size)  
-- Detects reason for stop:
-  - True end of website  
-  - Hit the `DEFAULT_MAX_PAGES` limit seed set to: 10,0000
-- Outputs versioned datasets:
-  - `mdc_links_raw_v1.txt`
-  - `mdc_links_raw_v2.txt`
-
-### ✔ Sample output
-[435] https://www.mdc.edu/academics/ - elapsed: 575.3s, frontier=92
-STOPPED because max_pages (10000) was reached.
-Saved 10000 URLs to ../data/mdc_links_raw_v1.txt
-
-### Best Practice 
-```
-- Scheduled Crawler Runs: To minimize impact on the school’s website traffic, we run the crawler once a month during 
-off-peak hours. For example, we start it around midnight and let it run until early morning (about 10 hours), ensuring 
-we’re not overloading the network. 
-- Polite Crawling: We include a one-second delay between requests to avoid flooding the server and to stay within 
-respectful usage limits.
-```
-```
-Note: seed max_page= 20,000 does not reach end of available links to explore, 
-current time for the crawler 9 - 10 hours. To be run once a month during low network traffic times.
-```
----
-
-# 🧠 Legacy Pipeline Detail (v1)
-
-This pipeline was the original implementation before the crawler was introduced.
-
-processed_mdc_links.txt
-│ (raw list with duplicates & #fragments)
-▼
-link_cleaner_v0.0.2.py
-│ (removes fragments & duplicate URLs)
-▼
-cleaned_links_set.txt
-│ (clean list)
-▼
-pdf_remover.py
-│ (removes .pdf)
-▼
-no_pdf_list.txt
-│
-▼
-list_divider.py
-│ (splits into div1/div2/div3)
-▼
-p_tag_scrapper.py
-│ (extracts <p> text → link_#.txt)
-
-
----
-
 # 📂 Repository Contents
 
 | File / Folder | Type | Description |
@@ -198,12 +136,49 @@ p_tag_scrapper.py
 
 
 ---
+# 🆕 **New Business-Grade Crawler (v2.0)**
 
+`crawler.py` is a **production-style, polite, domain-restricted crawler** that automatically discovers MDC content.
+
+### ✔ Features
+- Crawls only `*.mdc.edu` domains  
+- Skips login URLs, confirm endpoints, and JS-driven junk  
+- Avoids PDFs, images, docs, media  
+- Follows robots.txt disallow rules  
+- Logs errors and status codes  
+- Tracks crawl progress (elapsed time + frontier size)  
+- Detects reason for stop:
+  - True end of website  
+  - Hit the `DEFAULT_MAX_PAGES` limit seed set to: 10,0000
+- Outputs versioned datasets:
+  - `OUTPUT_LINKS_PATH: str = "../data/mdc_links_raw_v3.txt"`
+  - `ERROR_LOG_PATH: str = "../data/mdc_crawler_errors_v3.log"`
+
+### ✔ Sample output
+[435] https://www.mdc.edu/academics/ - elapsed: 575.3s, frontier=92
+STOPPED because max_pages (20000) was reached.
+Saved 10000 URLs to ../data/mdc_links_raw_v1.txt
+
+### Best Practice 
+```
+- Scheduled Crawler Runs: To minimize impact on the school’s website traffic, we run the crawler once a month during 
+off-peak hours. For example, we start it around midnight and let it run until early morning (about 10 hours), ensuring 
+we’re not overloading the network. 
+- Polite Crawling: We include a one-second delay between requests to avoid flooding the server and to stay within 
+respectful usage limits.
+```
+```
+Note: seed max_page= 20,000 does not reach end of available links to explore, 
+current time for the crawler 9 - 10 hours. To be run once a month during low network traffic times.
+```
+
+
+---
 # 🧩 Detailed Script Documentation
 
 ## 1. `crawler.py` (v2.0)
 ### **Purpose**
-Automatically crawl MDC’s public site and collect up to 10,000 HTML pages.
+Automatically crawl MDC’s public site and collect up to 20,000 HTML pages.
 
 ### **Key Internals**
 - `normalize_url()` → removes `#fragment`
@@ -227,7 +202,17 @@ of the classes needed in order to complete the degree plan, this is something th
 This is important information that would be beneficial to have with the scope of the project.
 2. Crawler was ran as (v2) with `default_max_pages=1000` seed adjusted to 20000 to ensure addition space was allocated to account for PDFs linsk.
 ---
-## 1. `link_cleaner` (v2.0)
+## 2. `link_cleaner.py` (v2.0)
+
+
+---
+## 3. `url_categorizer.py` (v2.0)
+
+---
+## 4. `page_scrapper.py` (v2.0)
+
+---
+## 5. `pdf_scrapper.py` (v2.0)
 
 ---
 🏁 Summary
