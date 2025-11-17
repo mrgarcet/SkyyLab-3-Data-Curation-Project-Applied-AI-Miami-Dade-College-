@@ -145,9 +145,11 @@ This project is designed to run as a **repeatable pipeline** so you can re‑cra
 ### 2) Create & activate a virtual environment
 **Windows (PowerShell)**
 ```powershell
-cd C:\Skyy
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1
+(.venv) C:\SkyyLab>
+pip --version
+pip install requests beautifulsoup4 lxml
+
+
 ```
 
 ### 3) Install Dependencies
