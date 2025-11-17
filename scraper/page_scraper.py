@@ -39,7 +39,7 @@ from bs4 import BeautifulSoup, NavigableString, Tag, FeatureNotFound
 # ---------- CLI defaults ----------
 DEFAULT_IN_URLS   = "../data/target_links_v3.txt"
 DEFAULT_IN_LABELS = "../data/urls_with_category_v3.csv"
-DEFAULT_OUT_JSONL = "../data/mdc_pages_v3.jsonl"
+DEFAULT_OUT_JSONL = "../data/mdc_pages_v4.jsonl"
 
 USER_AGENT = "SkyyScraper/1.0  contact: lorenzo.garcet001@mymdc.net"
 
