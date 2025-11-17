@@ -1,0 +1,179 @@
+def compute_text_density(el: Tag) -> float:
+    """A crude text-density score: characters / number of descendant tags."""
+    text = el.get_text(" ", strip=True)
+    ltext = len(text)
+    count_tags = sum(1 for _ in el.descendants if isinstance(_, Tag))
+    return ltext / (count_tags + 1)
+
+
+def find_main_content(soup: BeautifulSoup) -> Tag:
+    """
+    A stronger main-content extractor:
+    - prefers <main>
+    - else picks the highest text-density large container
+    """
+    if soup.find("main"):
+        return soup.find("main")
+
+    candidates = []
+    for div in soup.find_all(["div", "section", "article"]):
+        txt = div.get_text(" ", strip=True)
+        if len(txt) < 200:  # ignore tiny blocks
+            continue
+        score = compute_text_density(div)
+        candidates.append((score, div))
+
+    if not candidates:
+        return soup.body or soup
+
+    # pick highest text-density
+    candidates.sort(key=lambda x: x[0], reverse=True)
+    return candidates[0][1]
+
+
+def clean_soup(soup: BeautifulSoup) -> None:
+    """Improved cleaner with more real-world noise handling."""
+    REMOVE_CLASSES = [
+        "footer", "nav", "navbar", "sidebar", "breadcrumb", "ad", "ads",
+        "cookie", "modal", "popup", "banner", "social", "share", "tracking",
+        "skip-link", "offcanvas", "newsletter", "disclaimer"
+    ]
+
+    REMOVE_IDS = [
+        "footer", "header", "sidebar", "nav", "cookies", "cookie-banner"
+    ]
+
+    # drop known junk
+    for name in ["script", "style", "noscript", "svg", "canvas", "iframe"]:
+        for t in soup.find_all(name):
+            t.decompose()
+
+    for cls in REMOVE_CLASSES:
+        for t in soup.select(f".{cls}"):
+            t.decompose()
+
+    for idv in REMOVE_IDS:
+        for t in soup.select(f"#{idv}"):
+            t.decompose()
+
+
+def extract_tables(main: Tag) -> List[Dict]:
+    tables = []
+    for tbl in main.find_all("table"):
+        rows = []
+        for tr in tbl.find_all("tr"):
+            cells = [c.get_text(" ", strip=True) for c in tr.find_all(["td", "th"])]
+            if cells:
+                rows.append(cells)
+        if rows:
+            tables.append({"rows": rows})
+    return tables
+
+
+def extract_pairs(main: Tag) -> List[Tuple[str, str]]:
+    """Extracts key-value pairs like 'Label: Value' patterns or <dt>/<dd>."""
+    pairs = []
+    # HTML definition lists
+    for dl in main.find_all("dl"):
+        dts = dl.find_all("dt")
+        dds = dl.find_all("dd")
+        for dt, dd in zip(dts, dds):
+            pairs.append((dt.get_text(" ", strip=True), dd.get_text(" ", strip=True)))
+
+    # Text-based pairs
+    for p in main.find_all(["p", "li"]):
+        txt = p.get_text(" ", strip=True)
+        if ":" in txt and len(txt.split(":")[0]) < 50:
+            key, val = txt.split(":", 1)
+            pairs.append((key.strip(), val.strip()))
+    return pairs[:50]
+
+
+def extract_faq(main: Tag) -> List[Dict]:
+    """Detect basic question/answer blocks."""
+    faq = []
+    questions = main.find_all(["h2", "h3", "h4"])
+    for q in questions:
+        qtxt = q.get_text(" ", strip=True)
+        if "?" not in qtxt:
+            continue
+        # answer is the next sibling paragraph(s)
+        ans_parts = []
+        sib = q.find_next_sibling()
+        while sib and sib.name in ["p", "ul", "ol"]:
+            ans_parts.append(sib.get_text(" ", strip=True))
+            sib = sib.find_next_sibling()
+
+        if ans_parts:
+            faq.append({"question": qtxt, "answer": " ".join(ans_parts)})
+    return faq[:20]
+
+
+def parse_html(html: str, base_url: str) -> Dict[str, object]:
+    # --- original parsing logic (your version) ---
+    for parser in ("lxml", "html5lib", "html.parser"):
+        try:
+            soup = BeautifulSoup(html, parser)
+            break
+        except FeatureNotFound:
+            continue
+
+    # metadata extraction (your existing code)
+    lang = soup.html.get("lang") if soup.html else None
+    title = get_title(soup)
+    meta_desc = get_meta(soup, "description")
+    canonical = get_canonical(soup, base_url)
+
+    # clean noise
+    clean_soup(soup)
+
+    # improved main content finder
+    main = find_main_content(soup)
+
+    # text
+    text = text_from_node(main)
+    page_hash = hashlib.sha256(text.encode("utf-8")).hexdigest() if text else None
+
+    # headings
+    h1s = [h.get_text(" ", strip=True) for h in main.find_all("h1")]
+    h2s = [h.get_text(" ", strip=True) for h in main.find_all("h2")]
+    h3s = [h.get_text(" ", strip=True) for h in main.find_all("h3")]
+
+    # structured block extraction
+    tables = extract_tables(main)
+    pairs = extract_pairs(main)
+    faq = extract_faq(main)
+
+    # simple facts
+    emails = sorted(set(EMAIL_RE.findall(text)))
+    phones = sorted(set(PHONE_RE.findall(text)))
+    money = sorted(set(MONEY_RE.findall(text)))
+    dates = sorted(set(DATE_RE.findall(text)))
+
+    # links
+    links_summary = extract_links(soup, base_url)
+    breadcrumbs = get_breadcrumbs(soup)
+    jsonld_types = extract_json_ld_types(soup)
+
+    return {
+        "title": title,
+        "meta_description": meta_desc,
+        "canonical_url": canonical,
+        "lang": lang,
+        "h1": h1s,
+        "h2": h2s,
+        "h3": h3s,
+        "text": text,
+        "word_count": len(text.split()),
+        "emails": emails,
+        "phones": phones,
+        "money_amounts": money,
+        "dates": dates,
+        "links": links_summary,
+        "breadcrumbs": breadcrumbs,
+        "structured_data_types": jsonld_types,
+        "tables": tables,
+        "key_value_pairs": pairs,
+        "faq": faq,
+        "page_hash": page_hash,
+    }
