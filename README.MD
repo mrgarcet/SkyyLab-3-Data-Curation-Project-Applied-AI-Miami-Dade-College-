@@ -51,6 +51,7 @@ All JSON outputs are **line‑delimited** (one JSON object per line) and safe to
 ```
 **Skyy
 ¦   README.md
+¦   requirements.txt
 ¦               
 +---aged_data_files
 ¦       cleaned_links_v2.txt
@@ -135,12 +136,27 @@ All JSON outputs are **line‑delimited** (one JSON object per line) and safe to
 
 ## 🚀 Quick Start
 
-> **Python:** The code uses modern stdlib features (e.g., `datetime.UTC`), so **Python 3.11+** is recommended.
+This project is designed to run as a **repeatable pipeline** so you can re‑crawl and re‑ingest MDC (mdc.edu) content as the website evolves without brittle assumptions. The flow is: **crawl → clean → categorize → scrape HTML → scrape PDFs**. Defaults are already wired to the `data/` folder.
 
-**Install dependencies** (from project root):
-```bash
-pip install requests beautifulsoup4 lxml pdfplumber PyPDF2
+### 1) Prereqs
+- **Python 3.11+** (recommended; code uses modern `datetime.UTC` and 3.12‑safe patterns)
+- **pip** available on PATH
+
+### 2) Create & activate a virtual environment
+**Windows (PowerShell)**
+```powershell
+cd C:\Skyy
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
 ```
+
+### 3) Install Dependencies
+`pip install -r requirements.txt`
+
+### 4) Run the pipeline  
+All scripts have sensible defaults and write into the data/ directory:  
+`python pipeline/crawler.py`
+
 
 ---
 # Run the pipeline (end‑to‑end):
