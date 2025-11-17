@@ -1,0 +1,8 @@
+# Core HTTP + HTML parsing
+requests
+beautifulsoup4
+lxml
+
+# PDF parsing
+pdfplumber
+PyPDF2
