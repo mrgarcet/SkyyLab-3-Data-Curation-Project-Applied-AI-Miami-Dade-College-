@@ -34,7 +34,7 @@ from typing import Dict, Iterable, List, Optional, Set, Tuple
 from urllib.parse import urlparse, urljoin, urlunparse
 
 import requests
-from bs4 import BeautifulSoup, NavigableString, Tag
+from bs4 import BeautifulSoup, NavigableString, Tag, FeatureNotFound
 
 # ---------- CLI defaults ----------
 DEFAULT_IN_URLS   = "../data/target_links_v3.txt"
@@ -317,8 +317,21 @@ def extract_links(soup: BeautifulSoup, base_url: str) -> Dict[str, object]:
     }
 
 def parse_html(html: str, base_url: str) -> Dict[str, object]:
-    soup = BeautifulSoup(html, "lxml")
-    # Preserve <html lang>, robots/generator meta
+    # Prefer lxml (fast), then html5lib (tolerant), then stdlib html.parser.
+    # This prevents FeatureNotFound from killing the parse step when lxml/html5lib
+    # aren't installed on the runner.
+    for parser in ("lxml", "html5lib", "html.parser"):
+        try:
+            soup = BeautifulSoup(html, parser)
+            break
+        except FeatureNotFound:
+            continue
+
+    else:
+        # Extremely defensive: BeautifulSoup will default to html.parser anyway,
+        # but we keep a last resort to ensure soup is always built.
+        soup = BeautifulSoup(html, "html.parser")
+
     lang = None
     if soup.html and isinstance(soup.html, Tag):
         lang = soup.html.get("lang") or soup.html.get("xml:lang")
